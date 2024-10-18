@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, ForeignKey, Column
 from sqlalchemy.orm import relationship
@@ -151,6 +151,8 @@ def user_movies(user_id):
     try:
         movies = data_manager.get_movies_by_user(user_id)
         user = db.session.query(User).get(user_id)
+        if user is None:
+            return abort(404, description="User not found.")
         return render_template('user_movies.html', user=user, movies=movies)
     except Exception as e:
         print(f"Error fetching movies for user {user_id}: {e}")
@@ -175,7 +177,7 @@ def add_movie(user_id):
 
         # Fetch details from OMDb
         movie_details = fetch_movie_details_from_omdb(movie_name)
-        if movie_details and movie_details['Response'] == 'True':
+        if movie_details and movie_details.get('Response') == 'True':
             director = movie_details.get('Director', 'Unknown')
             year = int(movie_details.get('Year', 0))
             rating = float(movie_details.get('imdbRating', 0))  # Changed to float for proper handling of ratings
@@ -184,7 +186,7 @@ def add_movie(user_id):
             data_manager.add_movie(user_id, movie_details['Title'], director, year, rating)
             return redirect(url_for('user_movies', user_id=user_id))
         else:
-            return "Movie not found on OMDb.", 404
+            return abort(404, description="Movie not found on OMDb.")
 
     return render_template('add_movie.html', user_id=user_id)
 
@@ -192,6 +194,9 @@ def add_movie(user_id):
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST'])
 def update_movie(user_id, movie_id):
     movie = db.session.query(Movie).get(movie_id)
+    if movie is None:
+        return abort(404, description="Movie not found.")
+
     if request.method == 'POST':
         new_name = request.form['name']
         new_director = request.form['director']
@@ -205,8 +210,10 @@ def update_movie(user_id, movie_id):
 @app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['POST'])
 def delete_movie(user_id, movie_id):
     movie = db.session.query(Movie).get(movie_id)
-    if movie:
-        data_manager.delete_movie(movie.name, user_id)
+    if movie is None:
+        return abort(404, description="Movie not found.")
+
+    data_manager.delete_movie(movie.name, user_id)
     return redirect(url_for('user_movies', user_id=user_id))
 
 # Route to test database connection
@@ -217,6 +224,16 @@ def test_db():
         return f"Number of users: {len(users)}"
     except Exception as e:
         return f"Database error: {e}"
+
+# Error handling for 404 errors
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('404.html', error=str(error)), 404
+
+# Error handling for 500 errors
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('500.html', error=str(error)), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
@@ -243,4 +260,3 @@ if __name__ == "__main__":
                 print(f"Movie '{movie_details['Title']}' added.")
             else:
                 print("Movie not found on OMDb.")
-
