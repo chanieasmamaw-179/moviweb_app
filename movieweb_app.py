@@ -1,8 +1,11 @@
-from flask import Flask, request, render_template, redirect, url_for, jsonify
+import requests
+from flask import Flask, request, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, ForeignKey, Column
 from sqlalchemy.orm import relationship
-from DataManager_Interface import IDataManager  # Ensure this is the correct path
+from DataManager_Interface import IDataManager  # Ensure the correct file name
+from dotenv import load_dotenv
+import os
 
 # Initialize the Flask app and database
 app = Flask(__name__)
@@ -14,11 +17,11 @@ db = SQLAlchemy(app)
 
 # Define the User model
 class User(db.Model):
-    __tablename__ = 'Users'  # Make sure this matches the foreign key reference
+    __tablename__ = 'Users'
 
-    id = Column(Integer, primary_key=True)  # Unique identifier for each user
-    name = Column(String, nullable=False)  # User's name
-    movies = relationship("Movie", back_populates="user")  # Relationship with Movie (lowercase 'user')
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    movies = relationship("Movie", back_populates="user")
 
     def __repr__(self):
         return f"User(id={self.id}, name={self.name})"
@@ -27,14 +30,14 @@ class User(db.Model):
 class Movie(db.Model):
     __tablename__ = 'movies'
 
-    id = Column(Integer, primary_key=True)  # Unique identifier for each movie
-    name = Column(String, nullable=False)  # Movie's name
-    director = Column(String, nullable=False)  # Movie's director
-    year = Column(Integer, nullable=False)  # Year of release
-    rating = Column(Integer, nullable=False)  # Movie's rating
-    user_id = Column(Integer, ForeignKey('Users.id'))  # Foreign key referencing User (capital 'Users')
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    director = Column(String, nullable=False)
+    year = Column(Integer, nullable=False)
+    rating = Column(Integer, nullable=False)
+    user_id = Column(Integer, ForeignKey('Users.id'))
 
-    user = relationship("User", back_populates="movies")  # Relationship with User (lowercase 'user')
+    user = relationship("User", back_populates="movies")
 
     def __repr__(self):
         return f"Movie(id={self.id}, name={self.name}, director={self.director}, year={self.year}, rating={self.rating})"
@@ -60,13 +63,16 @@ class SQLiteDataManager(IDataManager):
         self.db.session.commit()
         print("Added Movie:", new_movie)
 
-    def update_movie(self, movie_id: int, new_rating: int):
-        """Update an existing movie's rating based on movie ID."""
+    def update_movie(self, movie_id: int, new_name: str, new_director: str, new_year: int, new_rating: int):
+        """Update an existing movie's details based on movie ID."""
         movie_to_update = self.db.session.query(Movie).filter(Movie.id == movie_id).one_or_none()
         if movie_to_update:
+            movie_to_update.name = new_name
+            movie_to_update.director = new_director
+            movie_to_update.year = new_year
             movie_to_update.rating = new_rating
             self.db.session.commit()
-            print("Updated Movie Rating:", movie_to_update)
+            print("Updated Movie:", movie_to_update)
         else:
             print("Movie not found.")
 
@@ -96,13 +102,39 @@ class SQLiteDataManager(IDataManager):
         self.db.session.commit()
         print("All movies cleared from the database.")
 
+    def clear_users(self):
+        """Clear all users from the database."""
+        self.db.session.query(User).delete()
+        self.db.session.commit()
+        print("All users cleared from the database.")
+
 # Instantiate SQLiteDataManager
 data_manager = SQLiteDataManager(db)
+
+# Load environment variables from .env file
+load_dotenv()
+
+def fetch_movie_details_from_omdb(movie_name):
+    """Fetch movie details from OMDb API."""
+    api_key = os.getenv('API_KEY')  # Ensure your .env file contains 'API_KEY=<your_api_key>'
+    if not api_key:
+        print("API Key is not set. Please check your .env file.")
+        return None
+
+    url = f"http://www.omdbapi.com/?t={movie_name}&apikey={api_key}"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an error for bad responses
+        return response.json()
+    except requests.RequestException as e:
+        print(f"Request failed: {e}")
+        return None
 
 # Route for Home Page
 @app.route('/')
 def home():
     return "Welcome to MovieWeb App!"
+
 # Route to list all users
 @app.route('/users')
 def list_users():
@@ -116,9 +148,13 @@ def list_users():
 # Route to display movies for a specific user
 @app.route('/users/<int:user_id>')
 def user_movies(user_id):
-    movies = data_manager.get_movies_by_user(user_id)
-    user = db.session.query(User).get(user_id)
-    return render_template('user_movies.html', user=user, movies=movies)
+    try:
+        movies = data_manager.get_movies_by_user(user_id)
+        user = db.session.query(User).get(user_id)
+        return render_template('user_movies.html', user=user, movies=movies)
+    except Exception as e:
+        print(f"Error fetching movies for user {user_id}: {e}")
+        return "Internal Server Error", 500
 
 # Route to add a new user
 @app.route('/add_user', methods=['GET', 'POST'])
@@ -135,12 +171,21 @@ def add_user():
 @app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST'])
 def add_movie(user_id):
     if request.method == 'POST':
-        name = request.form['name']
-        director = request.form['director']
-        year = request.form['year']
-        rating = request.form['rating']
-        data_manager.add_movie(user_id, name, director, year, rating)
-        return redirect(url_for('user_movies', user_id=user_id))
+        movie_name = request.form['name']
+
+        # Fetch details from OMDb
+        movie_details = fetch_movie_details_from_omdb(movie_name)
+        if movie_details and movie_details['Response'] == 'True':
+            director = movie_details.get('Director', 'Unknown')
+            year = int(movie_details.get('Year', 0))
+            rating = float(movie_details.get('imdbRating', 0))  # Changed to float for proper handling of ratings
+
+            # Save movie to the database
+            data_manager.add_movie(user_id, movie_details['Title'], director, year, rating)
+            return redirect(url_for('user_movies', user_id=user_id))
+        else:
+            return "Movie not found on OMDb.", 404
+
     return render_template('add_movie.html', user_id=user_id)
 
 # Route to update a movie for a specific user
@@ -148,11 +193,11 @@ def add_movie(user_id):
 def update_movie(user_id, movie_id):
     movie = db.session.query(Movie).get(movie_id)
     if request.method == 'POST':
-        movie.name = request.form['name']
-        movie.director = request.form['director']
-        movie.year = request.form['year']
-        movie.rating = request.form['rating']
-        db.session.commit()
+        new_name = request.form['name']
+        new_director = request.form['director']
+        new_year = request.form['year']
+        new_rating = request.form['rating']
+        data_manager.update_movie(movie_id, new_name, new_director, new_year, new_rating)
         return redirect(url_for('user_movies', user_id=user_id))
     return render_template('update_movie.html', movie=movie, user_id=user_id)
 
@@ -163,6 +208,15 @@ def delete_movie(user_id, movie_id):
     if movie:
         data_manager.delete_movie(movie.name, user_id)
     return redirect(url_for('user_movies', user_id=user_id))
+
+# Route to test database connection
+@app.route('/test_db')
+def test_db():
+    try:
+        users = db.session.query(User).all()
+        return f"Number of users: {len(users)}"
+    except Exception as e:
+        return f"Database error: {e}"
 
 if __name__ == "__main__":
     app.run(debug=True)
@@ -177,20 +231,16 @@ if __name__ == "__main__":
 
         # Adding movies interactively (Not recommended for production)
         while True:
-            movie_name = input("Enter movie name (or 'exit' to stop): ")
+            movie_name = input("Enter movie name (or 'exit' to quit): ")
             if movie_name.lower() == 'exit':
                 break
-            director = input("Enter Director: ")
-            year = int(input("Enter Year: "))
-            rating = int(input("Enter Rating: "))
-            data_manager.add_movie(user.id, movie_name, director, year, rating)
+            movie_details = fetch_movie_details_from_omdb(movie_name)
+            if movie_details and movie_details['Response'] == 'True':
+                director = movie_details.get('Director', 'Unknown')
+                year = int(movie_details.get('Year', 0))
+                rating = float(movie_details.get('imdbRating', 0))
+                data_manager.add_movie(1, movie_details['Title'], director, year, rating)  # Assuming user_id = 1
+                print(f"Movie '{movie_details['Title']}' added.")
+            else:
+                print("Movie not found on OMDb.")
 
-        # Update and delete movies (these can be modified as needed)
-        data_manager.update_movie(1, 9)  # Assuming ID 1 for the movie to update (replace with a valid ID if needed)
-        movie_to_delete = input("Enter movie name to delete: ")
-        data_manager.delete_movie(movie_to_delete, user.id)  # Change to an existing movie name if necessary
-
-        # Print all movies for the user
-        print("\nAll Movies for User:")
-        for movie in data_manager.get_movies_by_user(user.id):
-            print(movie)
