@@ -12,8 +12,8 @@ class IDataManager(ABC):
         pass
 
     @abstractmethod
-    def delete_movie(self, name: str):
-        """Delete a movie from the database by its name."""
+    def delete_movie(self, name: str, user_id: int):
+        """Delete a movie from the database by its name for a specific user."""
         pass
 
     @abstractmethod
