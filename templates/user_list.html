@@ -4,16 +4,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User List</title>
+    <!-- Main CSS from Multiverse theme -->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Responsive Styles -->
+    <style>
+        /* Basic styling for the section */
+        #main {
+            padding: 20px;
+        }
+
+        /* Header styles */
+        #header h1 {
+            text-align: center;
+            font-size: 2rem; /* Larger header for desktop */
+            margin-bottom: 20px;
+        }
+
+        /* User list styling */
+        .alt {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .alt li {
+            margin: 10px 0;
+            text-align: center; /* Center align user names */
+        }
+
+        .button.primary {
+            display: block;
+            margin: 20px auto; /* Center the button */
+            text-align: center;
+            font-size: 1.1rem; /* Slightly larger font for button */
+        }
+
+        /* Footer styling */
+        #footer {
+            padding: 20px;
+            text-align: center; /* Center footer content */
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 600px) {
+            #header h1 {
+                font-size: 1.5rem; /* Smaller header for mobile */
+            }
+
+            .button.primary {
+                font-size: 1rem; /* Adjust button size on small screens */
+            }
+
+            .alt li {
+                font-size: 1rem; /* Adjust user name size */
+            }
+        }
+    </style>
 </head>
-<body>
-    <h1>Users</h1>
-    <a href="{{ url_for('add_user') }}">Add New User</a>
-    <ul>
-        {% for user in users %}
-            <li>
-                <a href="{{ url_for('user_movies', user_id=user.id) }}">{{ user.name }}</a>
-            </li>
-        {% endfor %}
-    </ul>
+<body class="is-preload">
+
+    <!-- Wrapper (from Multiverse theme) -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header">
+             <h1><a href="index.html"><strong>MoviWeb App</strong> With Flask </a></h1>
+            <nav>
+                <ul>
+                    <li><a href="#footer" class="icon solid fa-info-circle">About</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Main Content Section -->
+        <div id="main">
+            <section class="panel">
+                <header>
+                    <h2>Users</h2>
+                </header>
+
+                <!-- Add New User Link -->
+                <a href="{{ url_for('add_user') }}" class="button primary">Add New User</a>
+
+                <!-- User List -->
+                <ul class="alt">
+                    {% for user in users %}
+                        <li>
+                            <a href="{{ url_for('user_movies', user_id=user.id) }}">{{ user.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
+
+        <!-- Footer Section -->
+        <footer id="footer" class="panel">
+            <div class="inner split">
+                <div>
+                    <section>
+                        <h2>Follow Us</h2>
+                        <ul class="icons">
+                            <li><a href="https://twitter.com" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                            <li><a href="https://www.facebook.com/profile.php?id=100085927770264" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                            <li><a href="mailto:chanieasmamaw@yahoo.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+                            <li><a href="https://github.com/chanieasmamaw-179" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+                        </ul>
+                    </section>
+                    <p class="copyright">
+                        &copy; Masterschool, program owner software Engineering, Berlin : <a href="http://html5up.net">HTML5 UP</a>.
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Scripts (from Multiverse theme) -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.poptrox.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
 </body>
 </html>

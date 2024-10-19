@@ -4,24 +4,148 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Movie</title>
+    <!-- Main CSS from Multiverse theme -->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Responsive Styles -->
+    <style>
+        /* Basic styling for the section */
+        #main {
+            padding: 20px;
+        }
+
+        /* Header styles */
+        #main header h2 {
+            text-align: center;
+            font-size: 2rem; /* Base size for larger screens */
+            margin-bottom: 1rem;
+        }
+
+        /* Form styles */
+        .fields {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .field {
+            flex: 1;
+            min-width: 300px; /* Minimum width for inputs */
+            margin: 10px; /* Margin around fields */
+        }
+
+        /* Button styles */
+        .actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 600px) {
+            #main header h2 {
+                font-size: 1.5rem; /* Reduce header size on small screens */
+            }
+
+            .fields {
+                flex-direction: column; /* Stack fields vertically */
+            }
+
+            .field {
+                min-width: 100%; /* Full width for inputs */
+            }
+
+            .actions {
+                flex-direction: column; /* Stack actions vertically */
+            }
+        }
+    </style>
 </head>
-<body>
-    <h1>Update Movie</h1>
-    <form method="POST">
-        <label for="name">Movie Name:</label>
-        <input type="text" id="name" name="name" value="{{ movie.name }}" required><br>
+<body class="is-preload">
 
-        <label for="director">Director:</label>
-        <input type="text" id="director" name="director" value="{{ movie.director }}" required><br>
+    <!-- Wrapper (from Multiverse theme) -->
+    <div id="wrapper">
 
-        <label for="year">Year:</label>
-        <input type="number" id="year" name="year" value="{{ movie.year }}" required><br>
+        <!-- Header -->
+        <header id="header">
+            <h1><a href="index.html"><strong>MoviWeb App</strong> With Flask </a></h1>
+        </header>
 
-        <label for="rating">Rating:</label>
-        <input type="number" id="rating" name="rating" min="1" max="10" value="{{ movie.rating }}" required><br>
+        <!-- Main Content Section -->
+        <div id="main">
+            <!-- Update Movie Form Section -->
+            <section class="panel">
+                <header>
+                    <h2>Update Movie</h2>
+                </header>
 
-        <button type="submit">Update Movie</button>
-    </form>
-    <a href="{{ url_for('user_movies', user_id=user_id) }}">Back to User Movies</a>
+                <form method="POST" class="alt">
+                    <div class="fields">
+                        <!-- Movie Name Input -->
+                        <div class="field half">
+                            <label for="name">Movie Name:</label>
+                            <input type="text" id="name" name="name" value="{{ movie.name }}" required />
+                        </div>
+
+                        <!-- Director Input -->
+                        <div class="field half">
+                            <label for="director">Director:</label>
+                            <input type="text" id="director" name="director" value="{{ movie.director }}" required />
+                        </div>
+
+                        <!-- Year Input -->
+                        <div class="field half">
+                            <label for="year">Year:</label>
+                            <input type="number" id="year" name="year" value="{{ movie.year }}" required />
+                        </div>
+
+                        <!-- Rating Input -->
+                        <div class="field half">
+                            <label for="rating">Rating:</label>
+                            <input type="number" id="rating" name="rating" min="1" max="10" value="{{ movie.rating }}" required />
+                        </div>
+                    </div>
+
+                    <ul class="actions">
+                        <li><button type="submit" class="primary">Update Movie</button></li>
+                    </ul>
+                </form>
+
+                <a href="{{ url_for('user_movies', user_id=user_id) }}" class="button">Back to User Movies</a>
+            </section>
+        </div>
+
+        <!-- Footer Section -->
+        <footer id="footer" class="panel">
+            <div class="inner split">
+                <div>
+                    <section>
+                        <h2>Follow Us</h2>
+                        <ul class="icons">
+                            <li><a href="https://de.masterschool.com/" class="icon brands fa-twitter"><span class="label">Masterschool</span></a></li>
+                            <li><a href="https://www.facebook.com/profile.php?id=100085927770264" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                            <li><a href="https://www.yahoo.com" class="icon solid fa-envelope"><span class="label">Email:chanieasmamaw@yahoo.com</span></a></li>
+                            <li><a href="https://github.com/chanieasmamaw-179" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+                        </ul>
+                    </section>
+                    <p class="copyright">
+                        &copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>.
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Scripts (from Multiverse theme) -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.poptrox.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
 </body>
 </html>

@@ -4,14 +4,149 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add User</title>
+    <!-- Main CSS from Multiverse theme -->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Responsive Styles -->
+    <style>
+        /* Ensure the form and fields are responsive */
+        .fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .field {
+            width: 100%; /* Make fields stack on smaller screens */
+            box-sizing: border-box;
+        }
+
+        /* On larger screens (desktops, tablets) */
+        @media(min-width: 600px) {
+            .field.half {
+                width: 48%; /* Two fields side by side */
+            }
+        }
+
+        /* Adjust button size and form section */
+        .actions {
+            display: flex;
+            justify-content: center;
+        }
+
+        button.primary {
+            padding: 10px 20px;
+            font-size: 1rem;
+        }
+
+        /* Adjust the footer for small screens */
+        #footer .inner.split {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        #footer ul.icons {
+            padding: 0;
+        }
+
+        #footer .icons li {
+            margin-right: 15px;
+        }
+
+        /* Make h1 in header responsive */
+        header h1 {
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        /* On smaller screens, adjust padding and margins */
+        @media(max-width: 599px) {
+            .panel {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            button.primary {
+                width: 100%;
+                font-size: 1rem;
+                padding: 12px;
+            }
+
+            .field.half {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
-<body>
-    <h1>Add New User</h1>
-    <form method="POST">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-        <button type="submit">Add User</button>
-    </form>
-    <a href="{{ url_for('list_users') }}">Back to User List</a>
+<body class="is-preload">
+
+    <!-- Wrapper (from Multiverse theme) -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header">
+            <h1><a href="index.html"><strong>MoviWeb App</strong> With Flask </a></h1>
+        </header>
+
+        <!-- Main Content Section -->
+        <div id="main">
+            <!-- Add User Form Section -->
+            <section class="panel">
+                <header>
+                    <h2>Add New User</h2>
+                </header>
+
+                <form method="POST" class="alt">
+                    <div class="fields">
+                        <!-- User Name Input -->
+                        <div class="field half">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" placeholder="Enter user name" required />
+                        </div>
+                    </div>
+
+                    <ul class="actions">
+                        <li><button type="submit" class="primary">Add User</button></li>
+                    </ul>
+                </form>
+            </section>
+        </div>
+
+        <!-- Footer Section -->
+        <footer id="footer" class="panel">
+            <div class="inner split">
+                <div>
+                    <section>
+                        <h2>Follow Us</h2>
+                        <ul class="icons">
+                            <li><a href="https://de.masterschool.com/" class="icon brands fa-twitter"><span class="label">Masterschool</span></a></li>
+                            <li><a href="https://www.facebook.com/profile.php?id=100085927770264" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                            <li><a href="https://www.yahoo.com" class="icon solid fa-envelope"><span class="label">Email: chanieasmamaw@yahoo.com</span></a></li>
+                            <li><a href="https://github.com/chanieasmamaw-179" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+                        </ul>
+                    </section>
+                    <p class="copyright">
+                        &copy; Masterschool, program owner software Engineering, Berlin : <a href="http://html5up.net">HTML5 UP</a>.
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Scripts (from Multiverse theme) -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.poptrox.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
 </body>
 </html>

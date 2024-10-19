@@ -133,8 +133,12 @@ def fetch_movie_details_from_omdb(movie_name):
 # Route for Home Page
 @app.route('/')
 def home():
-    return "Welcome to MovieWeb App!"
-
+    try:
+        users = data_manager.get_all_users()
+        return render_template('home.html', users=home)
+    except Exception as e:
+        print(f"Error fetching users: {e}")
+        return "Internal Server Error", 500
 # Route to list all users
 @app.route('/users')
 def list_users():

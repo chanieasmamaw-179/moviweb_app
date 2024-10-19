@@ -4,20 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ user.name }}'s Movies</title>
+    <!-- Main CSS from Multiverse theme -->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Responsive Styles -->
+    <style>
+        /* Basic styling for the section */
+        #main {
+            padding: 20px;
+        }
+
+        /* Header styles */
+        #header h1 {
+            text-align: center;
+            font-size: 2rem; /* Larger header for desktop */
+            margin-bottom: 20px;
+        }
+
+        /* Movie list styling */
+        .alt {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .alt li {
+            margin: 10px 0;
+            text-align: left; /* Left align movie details */
+            font-size: 1.1rem; /* Adjust font size for movies */
+        }
+
+        .button {
+            margin-top: 10px; /* Space between buttons and movie details */
+            display: inline-block; /* Ensure buttons are inline */
+        }
+
+        /* Footer styling */
+        #footer {
+            padding: 20px;
+            text-align: center; /* Center footer content */
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 600px) {
+            #header h1 {
+                font-size: 1.5rem; /* Smaller header for mobile */
+            }
+
+            .button.primary,
+            .button.small {
+                font-size: 1rem; /* Adjust button size on small screens */
+                width: 100%; /* Full width buttons */
+                margin: 10px 0; /* Space between buttons */
+            }
+
+            .alt li {
+                font-size: 1rem; /* Adjust movie name size */
+            }
+        }
+    </style>
 </head>
-<body>
-    <h1>{{ user.name }}'s Favorite Movies</h1>
-    <a href="{{ url_for('add_movie', user_id=user.id) }}">Add Movie</a>
-    <ul>
-        {% for movie in movies %}
-            <li>
-                {{ movie.name }} ({{ movie.year }}) - Rating: {{ movie.rating }}
-                <a href="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}">Edit</a>
-                <form action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}" method="POST" style="display:inline;">
-                    <button type="submit">Delete</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+<body class="is-preload">
+
+    <!-- Wrapper (from Multiverse theme) -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header">
+             <h1><a href="index.html"><strong>MoviWeb App</strong> With Flask </a></h1>
+        </header>
+
+        <!-- Main Content -->
+        <div id="main">
+            <section class="panel">
+                <header>
+                    <h2>{{ user.name }}'s Favorite Movies</h2>
+                </header>
+
+                <!-- Add Movie Button -->
+                <a href="{{ url_for('add_movie', user_id=user.id) }}" class="button primary">Add Movie</a>
+
+                <!-- Movie List -->
+                <ul class="alt">
+                    {% for movie in movies %}
+                        <li>
+                            <strong>{{ movie.name }}</strong> ({{ movie.year }}) - Rating: {{ movie.rating }}
+                            <br>
+                            <!-- Edit Button -->
+                            <a href="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}" class="button small">Edit</a>
+                            <!-- Delete Form -->
+                            <form action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="button small">Delete</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
+
+        <!-- Footer Section -->
+        <footer id="footer" class="panel">
+            <div class="inner split">
+                <div>
+                     <section>
+                        <h2>Follow Us</h2>
+                        <ul class="icons">
+                            <li><a href="https://de.masterschool.com/" class="icon brands fa-twitter"><span class="label">Masterschool</span></a></li>
+                            <li><a href="https://www.facebook.com/profile.php?id=100085927770264" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                            <li><a href="https://www.yahoo.com" class="icon solid fa-envelope"><span class="label">Email:chanieasmamaw@yahoo.com</span></a></li>
+                            <li><a href="https://github.com/chanieasmamaw-179" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+                        </ul>
+                    </section>
+                    <p class="copyright">
+                        &copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>.
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Scripts (from Multiverse theme) -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.poptrox.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
 </body>
 </html>

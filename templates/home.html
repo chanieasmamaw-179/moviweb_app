@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Movie</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <!-- Main CSS from Multiverse theme -->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Responsive Styles -->
+    <style>
+        /* Basic styling for the section */
+        #about {
+            padding: 20px;
+        }
+
+        /* Header styles */
+        #about header h2 {
+            text-align: center;
+            font-size: 2rem; /* Base size for larger screens */
+            margin-bottom: 1rem;
+        }
+
+        /* Content styling */
+        .content {
+            max-width: 800px; /* Limit width for better readability */
+            margin: 0 auto; /* Center content */
+            padding: 10px;
+        }
+
+        /* List styles */
+        .content ul {
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 600px) {
+            #about header h2 {
+                font-size: 1.5rem; /* Reduce header size on small screens */
+            }
+
+            .content {
+                padding: 10px; /* Adjust padding on smaller screens */
+            }
+        }
+    </style>
+</head>
+<body class="is-preload">
+
+    <!-- Wrapper (from Multiverse theme) -->
+    <div id="wrapper">
+        <!-- About Section -->
+        <section class="panel" id="about">
+            <header>
+                <h2><strong>Welcome to the MoviWeb app</strong></h2>
+                <h2>About MoviWeb</h2>
+            </header>
+            <div class="content">
+                <p>This application is a Flask-based web app called <strong>MoviWeb</strong>, designed for managing a personal movie collection. It utilizes SQLAlchemy for database interactions, specifically with a SQLite database, to store user and movie information.</p>
+                <h3>Key Features:</h3>
+                <ul>
+                    <li><strong>User Management:</strong> Users can be added to the system, and each user can manage their own movie collection.</li>
+                    <li><strong>Movie Management:</strong> Users can add, update, and delete movies from their collection, with details like name, director, release year, and IMDb rating.</li>
+                    <li><strong>OMDb API Integration:</strong> The app fetches movie details from the OMDb API, allowing users to obtain up-to-date information when adding new movies.</li>
+                    <li><strong>Web Routes:</strong> The app provides various routes to interact with the user interface, including displaying users, their movies, and forms for adding or updating data.</li>
+                    <li><strong>Error Handling:</strong> It has basic error handling for 404 (not found) and 500 (server error) responses.</li>
+                    <li><strong>Database Testing:</strong> There's a route to test database connectivity and check the number of registered users.</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+</body>
+</html>
