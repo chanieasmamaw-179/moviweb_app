@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Users - MovieWeb App</title>
-    <!-- Main CSS from Multiverse theme -->
     <link rel="stylesheet" href="assets/css/main.css" />
     <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
-    <!-- Custom Responsive Styles -->
     <style>
         /* Basic styling for the main section */
         #main {
@@ -68,26 +66,17 @@
     </style>
 </head>
 <body class="is-preload">
-
-    <!-- Wrapper (from Multiverse theme) -->
     <div id="wrapper">
-
-        <!-- Header -->
         <header id="header">
-             <h1><a href="index.html"><strong>MoviWeb App</strong> With Flask </a></h1>
+            <h1><a href="index.html"><strong>MoviWeb App</strong> With Flask</a></h1>
         </header>
 
-        <!-- Main Content -->
-        <div id="main">
+        <main id="main">
             <section class="panel">
                 <header>
                     <h2>Users</h2>
                 </header>
-
-                <!-- Add New User Button -->
                 <a href="{{ url_for('add_user') }}" class="button primary">Add New User</a>
-
-                <!-- User List -->
                 <ul class="alt">
                     {% for user in users %}
                         <li>
@@ -98,9 +87,8 @@
                     {% endfor %}
                 </ul>
             </section>
-        </div>
+        </main>
 
-        <!-- Footer Section -->
         <footer id="footer" class="panel">
             <div class="inner split">
                 <div>
@@ -119,16 +107,13 @@
                 </div>
             </div>
         </footer>
-
     </div>
 
-    <!-- Scripts (from Multiverse theme) -->
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/jquery.poptrox.min.js"></script>
     <script src="assets/js/browser.min.js"></script>
     <script src="assets/js/breakpoints.min.js"></script>
     <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
-
 </body>
 </html>

@@ -2,146 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Movie</title>
+    <title>Fetch Movie</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <!-- Main CSS from Multiverse theme -->
     <link rel="stylesheet" href="assets/css/main.css" />
     <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
-    <!-- Custom Responsive Styles -->
     <style>
-        /* Ensure the form and fields are responsive */
-        .fields {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
+        /* Add your styles here */
+        #fetch-movie-form {
+            padding: 20px;
         }
 
-        .field {
-            width: 100%; /* Make fields stack on smaller screens */
-            box-sizing: border-box;
-        }
-
-        /* On larger screens (desktops, tablets) */
-        @media(min-width: 600px) {
-            .field.half {
-                width: 48%; /* Two fields side by side */
-            }
-        }
-
-        /* Adjust button size and form section */
-        .actions {
-            display: flex;
-            justify-content: center;
-        }
-
-        button.primary {
-            padding: 10px 20px;
-            font-size: 1rem;
-        }
-
-        /* Adjust the footer for small screens */
-        #footer .inner.split {
-            flex-direction: column;
-            align-items: center;
+        #header h1 {
             text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
         }
 
-        #footer ul.icons {
-            padding: 0;
+        .form-group {
+            margin-bottom: 15px;
         }
 
-        #footer .icons li {
-            margin-right: 15px;
+        .form-group label {
+            display: block;
+            font-weight: bold;
         }
 
-        /* Make h1 in header responsive */
-        header h1 {
-            font-size: 1.8rem;
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
             text-align: center;
-        }
-
-        /* On smaller screens, adjust padding and margins */
-        @media(max-width: 599px) {
-            .panel {
-                padding: 20px;
-            }
-
-            header h1 {
-                font-size: 1.5rem;
-            }
-
-            button.primary {
-                width: 100%;
-                font-size: 1rem;
-                padding: 12px;
-            }
-
-            .field.half {
-                width: 100%;
-            }
+            text-decoration: none;
         }
     </style>
 </head>
-<body class="is-preload">
-
-    <!-- Wrapper (from Multiverse theme) -->
+<body>
     <div id="wrapper">
-
-        <!-- Header -->
         <header id="header">
             <h1><a href="index.html"><strong>MoviWeb App</strong> With Flask </a></h1>
         </header>
-
-        <!-- Main Content Section -->
-        <div id="main">
-            <!-- Add Movie Form Section -->
-            <section class="panel">
-                <form method="POST" class="alt">
-                    <div class="fields">
-                        <!-- Movie Name Input -->
-                        <div class="field half">
-                            <label for="name">Movie Name:</label>
-                            <input type="text" id="name" name="name" placeholder="Enter movie name" required />
-                        </div>
-                    </div>
-
-                    <ul class="actions">
-                        <li><button type="submit" class="primary">Fetch Details</button></li>
-                    </ul>
-                </form>
-            </section>
-
-        <!-- Footer Section -->
-        <footer id="footer" class="panel">
-            <div class="inner split">
-                <div>
-                    <section>
-                        <h2>Follow Us</h2>
-                        <ul class="icons">
-                            <li><a href="https://de.masterschool.com/" class="icon brands fa-twitter"><span class="label">Masterschool</span></a></li>
-                            <li><a href="https://www.facebook.com/profile.php?id=100085927770264" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-                            <li><a href="https://www.yahoo.com" class="icon solid fa-envelope"><span class="label">Email:chanieasmamaw@yahoo.com</span></a></li>
-                            <li><a href="https://github.com/chanieasmamaw-179" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-                        </ul>
-                    </section>
-                    <p class="copyright">
-                        &copy; Masterschool, program owner Software Engineering with design: <a href="http://html5up.net">HTML5 UP</a>.
-                    </p>
+        <div id="fetch-movie-form">
+            <h2>Fetch Movie Details</h2>
+            <form action="{{ url_for('fetch_movie') }}" method="post">
+                <div class="form-group">
+                    <label for="movie_name">Movie Name:</label>
+                    <input type="text" id="movie_name" name="name" required>
                 </div>
-            </div>
-        </footer>
+                <button type="submit" class="button">Fetch Movie Details</button>
+            </form>
 
+            {% if movie_details %}
+            <h3>Movie Details</h3>
+            <ul>
+                <li><strong>Director:</strong> {{ movie_details.director }}</li>
+                <li><strong>Year:</strong> {{ movie_details.year }}</li>
+                <li><strong>Rating:</strong> {{ movie_details.rating }}</li>
+                <li><strong>Genres:</strong> {{ movie_details.genres | join(', ') }}</li>
+            </ul>
+            {% elif error %}
+            <p style="color: red;">{{ error }}</p>
+            {% endif %}
+        </div>
     </div>
-
-    <!-- Scripts (from Multiverse theme) -->
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/jquery.poptrox.min.js"></script>
-    <script src="assets/js/browser.min.js"></script>
-    <script src="assets/js/breakpoints.min.js"></script>
-    <script src="assets/js/util.js"></script>
-    <script src="assets/js/main.js"></script>
-
 </body>
 </html>

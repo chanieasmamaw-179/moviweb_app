@@ -82,6 +82,17 @@
                 width: 100%;
             }
         }
+
+        .flashes {
+            list-style-type: none;
+            padding: 10px;
+            background-color: #f9c2c2;
+            margin: 10px 0;
+        }
+
+        .flashes.success {
+            background-color: #c2f9c2;
+        }
     </style>
 </head>
 <body class="is-preload">
@@ -102,7 +113,17 @@
                     <h2>Add New User</h2>
                 </header>
 
-                <form method="POST" class="alt">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <ul class="flashes">
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="{{ url_for('add_user') }}" class="alt">
                     <div class="fields">
                         <!-- User Name Input -->
                         <div class="field half">

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details</title>
+</head>
+<body>
+    <h1>{{ movie_details.name }}</h1>
+    <p>Director: {{ movie_details.director }}</p>
+    <p>Year: {{ movie_details.year }}</p>
+    <p>IMDB Rating: {{ movie_details.rating }}</p>
+    <p>Genres: {{ movie_details.genres | join(', ') }}</p>
+    <form action="{{ url_for('add_movie') }}" method="post">
+        <input type="hidden" name="name" value="{{ movie_details.name }}">
+        <input type="hidden" name="director" value="{{ movie_details.director }}">
+        <input type="hidden" name="year" value="{{ movie_details.year }}">
+        <input type="hidden" name="rating" value="{{ movie_details.rating }}">
+        <input type="hidden" name="genre_ids" value="{{ movie_details.genres }}">
+        <button type="submit">Add Movie</button>
+    </form>
+    <br>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+</body>
+</html>

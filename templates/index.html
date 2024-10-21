@@ -47,6 +47,11 @@
             <header>
                 <h2><strong>Welcome to the MoviWeb app</strong></h2>
                 <h2>About MoviWeb</h2>
+                <form action="{{ url_for('fetch_movie') }}" method="POST">
+
+                    <input type="text" name="movie_name" placeholder="Enter Movie Name" required>
+        <button type="submit">Fetch Movie Details</button>
+    </form>
             </header>
             <div class="content">
                 <p>This application is a Flask-based web app called <strong>MoviWeb</strong>, designed for managing a personal movie collection. It utilizes SQLAlchemy for database interactions, specifically with a SQLite database, to store user and movie information.</p>

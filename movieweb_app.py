@@ -1,19 +1,31 @@
 import requests
 from flask import Flask, request, render_template, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer, String, ForeignKey, Column
+from sqlalchemy import Integer, String, ForeignKey, Column, Table
 from sqlalchemy.orm import relationship
-from DataManager_Interface import IDataManager  # Ensure the correct file name
 from dotenv import load_dotenv
 import os
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+
+# Load environment variables
+load_dotenv()
 
 # Initialize the Flask app and database
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/masterschool/Documents/Masterschool_projects_2024/moviweb_app/MoviWeb.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///MoviWeb.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
+
+# Association table for many-to-many relationship between Movie and Genre
+movie_genre_association = db.Table('movie_genre_association',
+                                   Column('movie_id', Integer, ForeignKey('movies.id')),
+                                   Column('genre_id', Integer, ForeignKey('genres.id'))
+                                   )
 
 # Define the User model
 class User(db.Model):
@@ -22,6 +34,7 @@ class User(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     movies = relationship("Movie", back_populates="user")
+    reviews = relationship("Review", back_populates="user")
 
     def __repr__(self):
         return f"User(id={self.id}, name={self.name})"
@@ -32,235 +45,210 @@ class Movie(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    director = Column(String, nullable=False)
+    director_id = Column(Integer, ForeignKey('directors.id'))
     year = Column(Integer, nullable=False)
     rating = Column(Integer, nullable=False)
     user_id = Column(Integer, ForeignKey('Users.id'))
 
     user = relationship("User", back_populates="movies")
+    director = relationship("Director", back_populates="movies")
+    genres = relationship("Genre", secondary=movie_genre_association, back_populates="movies")
+    reviews = relationship("Review", back_populates="movie")
 
     def __repr__(self):
-        return f"Movie(id={self.id}, name={self.name}, director={self.director}, year={self.year}, rating={self.rating})"
+        return f"Movie(id={self.id}, name={self.name}, year={self.year}, rating={self.rating})"
+
+# Define the Director model
+class Director(db.Model):
+    __tablename__ = 'directors'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    birth_date = Column(String)  # Use Date type if necessary
+
+    movies = relationship("Movie", back_populates="director")
+
+    def __repr__(self):
+        return f"Director(id={self.id}, name={self.name}, birth_date={self.birth_date})"
+
+# Define the Genre model
+class Genre(db.Model):
+    __tablename__ = 'genres'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+
+    movies = relationship("Movie", secondary=movie_genre_association, back_populates="genres")
+
+    def __repr__(self):
+        return f"Genre(id={self.id}, name={self.name})"
+
+# Define the Review model
+class Review(db.Model):
+    __tablename__ = 'reviews'
+
+    id = Column(Integer, primary_key=True)
+    review_text = Column(String, nullable=False)
+    rating = Column(Integer, nullable=False)
+    user_id = Column(Integer, ForeignKey('Users.id'), nullable=False)
+    movie_id = Column(Integer, ForeignKey('movies.id'), nullable=False)
+
+    user = relationship("User", back_populates="reviews")
+    movie = relationship("Movie", back_populates="reviews")
+
+    def __repr__(self):
+        return f"Review(id={self.id}, rating={self.rating}, user_id={self.user_id}, movie_id={self.movie_id})"
 
 # Create all tables within an application context
 with app.app_context():
     db.create_all()
 
-# DataManager Class for Data Management
-class SQLiteDataManager(IDataManager):
-    def __init__(self, db: SQLAlchemy):
-        self.db = db
-
-    def add_movie(self, user_id: int, name: str, director: str, year: int, rating: int):
-        """Add a new movie to the database."""
-        existing_movie = self.db.session.query(Movie).filter(Movie.name == name, Movie.user_id == user_id).one_or_none()
-        if existing_movie:
-            print(f"Movie '{name}' already exists for user {user_id}.")
-            return
-
-        new_movie = Movie(name=name, director=director, year=year, rating=rating, user_id=user_id)
-        self.db.session.add(new_movie)
-        self.db.session.commit()
-        print("Added Movie:", new_movie)
-
-    def update_movie(self, movie_id: int, new_name: str, new_director: str, new_year: int, new_rating: int):
-        """Update an existing movie's details based on movie ID."""
-        movie_to_update = self.db.session.query(Movie).filter(Movie.id == movie_id).one_or_none()
-        if movie_to_update:
-            movie_to_update.name = new_name
-            movie_to_update.director = new_director
-            movie_to_update.year = new_year
-            movie_to_update.rating = new_rating
-            self.db.session.commit()
-            print("Updated Movie:", movie_to_update)
-        else:
-            print("Movie not found.")
-
-    def delete_movie(self, name: str, user_id: int):
-        """Delete a movie from the database by its name for a specific user."""
-        movies_to_delete = self.db.session.query(Movie).filter(Movie.name == name, Movie.user_id == user_id).all()
-        if movies_to_delete:
-            for movie in movies_to_delete:
-                self.db.session.delete(movie)
-            self.db.session.commit()
-            print(f"Deleted {len(movies_to_delete)} Movie(s): {[str(movie) for movie in movies_to_delete]}")
-        else:
-            print("Movie not found.")
-
-    def get_movies_by_user(self, user_id: int):
-        """Retrieve all movies for a specific user."""
-        movies = self.db.session.query(Movie).filter(Movie.user_id == user_id).all()
-        return movies
-
-    def get_all_users(self):
-        """Retrieve all users from the database."""
-        return self.db.session.query(User).all()
-
-    def clear_movies(self):
-        """Clear all movies from the database."""
-        self.db.session.query(Movie).delete()
-        self.db.session.commit()
-        print("All movies cleared from the database.")
-
-    def clear_users(self):
-        """Clear all users from the database."""
-        self.db.session.query(User).delete()
-        self.db.session.commit()
-        print("All users cleared from the database.")
-
-# Instantiate SQLiteDataManager
-data_manager = SQLiteDataManager(db)
-
-# Load environment variables from .env file
-load_dotenv()
-
 def fetch_movie_details_from_omdb(movie_name):
     """Fetch movie details from OMDb API."""
     api_key = os.getenv('API_KEY')  # Ensure your .env file contains 'API_KEY=<your_api_key>'
     if not api_key:
-        print("API Key is not set. Please check your .env file.")
+        logging.error("API Key is not set. Please check your .env file.")
         return None
 
     url = f"http://www.omdbapi.com/?t={movie_name}&apikey={api_key}"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an error for bad responses
-        return response.json()
-    except requests.RequestException as e:
-        print(f"Request failed: {e}")
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        if data['Response'] == 'True':
+            return {
+                'name': data.get('Title'),
+                'director': data.get('Director'),
+                'year': int(data.get('Year', 0)),
+                'rating': float(data.get('imdbRating', 0.0)),
+                'genres': data.get('Genre').split(', ') if data.get('Genre') else []
+            }
+        else:
+            logging.error("Movie not found: %s", data.get('Error'))
+            return None
+    else:
+        logging.error("Failed to fetch movie details: %s", response.status_code)
         return None
+@app.route('/fetch_movie', methods=['GET', 'POST'])
+def fetch_movie():
+    """Fetch movie details and allow adding to the user's collection."""
+    user_id = request.args.get('user_id')  # Get user_id from query parameters
 
-# Route for Home Page
+    if request.method == 'POST':
+        # Check if 'name' exists in the form data
+        movie_name = request.form.get('name')  # Use .get() to avoid KeyError
+
+        if not movie_name:  # If movie_name is None or empty
+            return render_template('add_movie.html', error="Movie name is required.", user_id=user_id)
+
+        movie_details = fetch_movie_details_from_omdb(movie_name)
+
+        if movie_details:
+            return render_template('confirm_add_movie.html', movie_details=movie_details)
+        else:
+            return render_template('add_movie.html', error="Movie not found. Please try again.", user_id=user_id)
+
+    return render_template('add_movie.html', user_id=user_id)  # Pass user_id to the template
+
+
+@app.route('/add_movie', methods=['POST'])
+def add_movie():
+    """Handle the addition of a movie."""
+    movie_name = request.form['name']
+    movie_details = fetch_movie_details_from_omdb(movie_name)
+
+    if not movie_details:
+        return render_template('add_movie.html', error="Movie not found. Please try another title.")
+
+    # Extract details from the API response
+    director = movie_details['director']
+    year = movie_details['year']
+    rating = movie_details['rating']
+    genre_names = movie_details['genres']
+
+    # Get user ID from form (hidden input)
+    user_id = request.form.get('user_id', type=int)
+
+    try:
+        # Create a new movie instance
+        new_movie = Movie(name=movie_details['name'], year=year, rating=rating, user_id=user_id)
+
+        # Check for existing director
+        existing_director = db.session.query(Director).filter_by(name=director).first()
+        if existing_director:
+            new_movie.director = existing_director
+        else:
+            new_director = Director(name=director)
+            db.session.add(new_director)
+            new_movie.director = new_director
+
+        # Add genres based on fetched genre names
+        for genre_name in genre_names:
+            existing_genre = db.session.query(Genre).filter_by(name=genre_name).first()
+            if not existing_genre:
+                new_genre = Genre(name=genre_name)
+                db.session.add(new_genre)
+                existing_genre = new_genre
+
+            new_movie.genres.append(existing_genre)
+
+        # Save the new movie to the database
+        db.session.add(new_movie)
+        db.session.commit()
+
+        return redirect(url_for('list_movies', user_id=user_id))
+    except Exception as e:
+        logging.error(f"Error adding movie: {e}")
+        return render_template('add_movie.html', error="Failed to add movie. Please try again.")
+
+@app.route('/delete_movie/<int:user_id>/<int:movie_id>', methods=['POST'])
+def delete_movie(user_id, movie_id):
+    """Handle the deletion of a movie."""
+    movie = db.session.query(Movie).filter(Movie.id == movie_id, Movie.user_id == user_id).one_or_none()
+    if movie:
+        db.session.delete(movie)
+        db.session.commit()
+        logging.info(f"Deleted movie: {movie.name}")
+        return redirect(url_for('list_movies', user_id=user_id))
+    else:
+        logging.warning("Movie not found for deletion.")
+        return abort(404)
+
+@app.route('/list_movies/<int:user_id>', methods=['GET'])
+def list_movies(user_id):
+    """Display the list of movies for a specific user."""
+    movies = db.session.query(Movie).filter(Movie.user_id == user_id).all()
+    return render_template('list_movies.html', movies=movies, user_id=user_id)
+
 @app.route('/')
-def home():
-    try:
-        users = data_manager.get_all_users()
-        return render_template('home.html', users=home)
-    except Exception as e:
-        print(f"Error fetching users: {e}")
-        return "Internal Server Error", 500
-# Route to list all users
-@app.route('/users')
-def list_users():
-    try:
-        users = data_manager.get_all_users()
-        return render_template('user_list.html', users=users)
-    except Exception as e:
-        print(f"Error fetching users: {e}")
-        return "Internal Server Error", 500
+def index():
+    """Render the homepage."""
+    return render_template('index.html')
 
-# Route to display movies for a specific user
-@app.route('/users/<int:user_id>')
-def user_movies(user_id):
-    try:
-        movies = data_manager.get_movies_by_user(user_id)
-        user = db.session.query(User).get(user_id)
-        if user is None:
-            return abort(404, description="User not found.")
-        return render_template('user_movies.html', user=user, movies=movies)
-    except Exception as e:
-        print(f"Error fetching movies for user {user_id}: {e}")
-        return "Internal Server Error", 500
-
-# Route to add a new user
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():
+    """Handle the addition of a user."""
     if request.method == 'POST':
-        name = request.form['name']
-        new_user = User(name=name)
+        user_name = request.form['name']
+        existing_user = db.session.query(User).filter(User.name == user_name).one_or_none()
+        if existing_user:
+            logging.warning(f"User '{user_name}' already exists.")
+            return render_template('add_user.html', error="User already exists.")
+
+        new_user = User(name=user_name)
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for('list_users'))
+        return redirect(url_for('index'))
     return render_template('add_user.html')
 
-# Route to add a new movie for a specific user
-@app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST'])
-def add_movie(user_id):
-    if request.method == 'POST':
-        movie_name = request.form['name']
-
-        # Fetch details from OMDb
-        movie_details = fetch_movie_details_from_omdb(movie_name)
-        if movie_details and movie_details.get('Response') == 'True':
-            director = movie_details.get('Director', 'Unknown')
-            year = int(movie_details.get('Year', 0))
-            rating = float(movie_details.get('imdbRating', 0))  # Changed to float for proper handling of ratings
-
-            # Save movie to the database
-            data_manager.add_movie(user_id, movie_details['Title'], director, year, rating)
-            return redirect(url_for('user_movies', user_id=user_id))
-        else:
-            return abort(404, description="Movie not found on OMDb.")
-
-    return render_template('add_movie.html', user_id=user_id)
-
-# Route to update a movie for a specific user
-@app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST'])
-def update_movie(user_id, movie_id):
-    movie = db.session.query(Movie).get(movie_id)
-    if movie is None:
-        return abort(404, description="Movie not found.")
-
-    if request.method == 'POST':
-        new_name = request.form['name']
-        new_director = request.form['director']
-        new_year = request.form['year']
-        new_rating = request.form['rating']
-        data_manager.update_movie(movie_id, new_name, new_director, new_year, new_rating)
-        return redirect(url_for('user_movies', user_id=user_id))
-    return render_template('update_movie.html', movie=movie, user_id=user_id)
-
-# Route to delete a movie for a specific user
-@app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['POST'])
-def delete_movie(user_id, movie_id):
-    movie = db.session.query(Movie).get(movie_id)
-    if movie is None:
-        return abort(404, description="Movie not found.")
-
-    data_manager.delete_movie(movie.name, user_id)
-    return redirect(url_for('user_movies', user_id=user_id))
-
-# Route to test database connection
-@app.route('/test_db')
-def test_db():
-    try:
-        users = db.session.query(User).all()
-        return f"Number of users: {len(users)}"
-    except Exception as e:
-        return f"Database error: {e}"
-
-# Error handling for 404 errors
 @app.errorhandler(404)
 def not_found(error):
-    return render_template('404.html', error=str(error)), 404
+    return render_template('404.html'), 404
 
-# Error handling for 500 errors
 @app.errorhandler(500)
 def internal_error(error):
-    return render_template('500.html', error=str(error)), 500
+    return render_template('500.html'), 500
 
-if __name__ == "__main__":
+
+
+if __name__ == '__main__':
     app.run(debug=True)
-
-    # Use the application context when interacting with the database
-    with app.app_context():
-        # Create an instance of the User table if it doesn't exist
-        if db.session.query(User).count() == 0:
-            user = User(name="John Doe")
-            db.session.add(user)
-            db.session.commit()
-
-        # Adding movies interactively (Not recommended for production)
-        while True:
-            movie_name = input("Enter movie name (or 'exit' to quit): ")
-            if movie_name.lower() == 'exit':
-                break
-            movie_details = fetch_movie_details_from_omdb(movie_name)
-            if movie_details and movie_details['Response'] == 'True':
-                director = movie_details.get('Director', 'Unknown')
-                year = int(movie_details.get('Year', 0))
-                rating = float(movie_details.get('imdbRating', 0))
-                data_manager.add_movie(1, movie_details['Title'], director, year, rating)  # Assuming user_id = 1
-                print(f"Movie '{movie_details['Title']}' added.")
-            else:
-                print("Movie not found on OMDb.")
