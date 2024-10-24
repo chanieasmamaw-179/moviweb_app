@@ -6,6 +6,8 @@ from sqlalchemy.orm import relationship
 from dotenv import load_dotenv
 import os
 import logging
+import openai
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,7 +20,6 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///MoviWeb.db')
 #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
@@ -335,6 +336,42 @@ def not_found(error):
 @app.errorhandler(500)
 def server_error(error):
     return render_template('500.html'), 500
+
+def generate_ai_response(user_query):
+    """Generates a response from the OpenAI API using the provided user query."""
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": user_query}]
+        )
+        return response['choices'][0]['message']['content']
+    except openai.error.OpenAIError as e:
+        logging.error(f"Failed to generate AI response: {e}")
+        if "exceeded your current quota" in str(e):
+            return "You have exceeded your current quota. Please check your plan and billing details."
+        return "An error occurred while generating the AI response."
+
+@app.route('/ai_feature_ideas', methods=['GET', 'POST'])
+def ai_feature_ideas():
+    if request.method == 'POST':
+        user_query = request.form.get('query')
+
+        if not user_query:
+            logging.warning("User query is empty.")
+            return render_template('ai_feature_ideas.html', error="Please enter a query.")
+
+        try:
+            ai_response = generate_ai_response(user_query)
+            return render_template('ai_feature_ideas.html', ai_response=ai_response)
+
+        except openai.error.OpenAIError as e:
+            logging.error(f"Error during AI completion: {e}")
+            if "exceeded your current quota" in str(e):
+                return render_template('ai_feature_ideas.html', error="You have exceeded your quota. Please check your plan and billing details.")
+            return render_template('ai_feature_ideas.html', error="An error occurred while fetching AI ideas.")
+
+    return render_template('ai_feature_ideas.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
