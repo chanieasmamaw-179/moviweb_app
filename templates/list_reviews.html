@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews</title>
+</head>
+<body>
+    {% if error %}
+        <h1>{{ error }}</h1>
+    {% else %}
+        <h1>Reviews{% if user %} by {{ user.name }}{% endif %}</h1>
+        <ul>
+            {% for review in reviews %}
+                <li>
+                    <strong>Movie:</strong> {{ review.movie.name }}<br>
+                    <strong>Rating:</strong> {{ review.rating }}/10<br>
+                    <strong>Review:</strong> {{ review.review_text }}<br><br>
+                </li>
+            {% else %}
+                <li>No reviews found.</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

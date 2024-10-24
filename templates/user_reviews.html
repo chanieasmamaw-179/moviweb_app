@@ -1,8 +1,9 @@
+<!-- user_reviews.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Confirm Add Movie</title>
+    <title>{{ user.name }}'s Reviews</title>
     	<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -10,15 +11,15 @@
 
 </head>
 <body>
-    <h1>Confirm Add Movie</h1>
-    <p>Name: {{ movie_details.name }}</p>
-    <p>Director: {{ movie_details.director }}</p>
-    <p>Year: {{ movie_details.year }}</p>
-    <p>Rating: {{ movie_details.rating }}</p>
-    <form method="POST" action="{{ url_for('add_movie') }}">
-        <input type="hidden" name="user_id" value="{{ user_id }}">
-        <input type="hidden" name="name" value="{{ movie_details.name }}">
-        <button type="submit">Add Movie</button>
-    </form>
+    <h1>Reviews by {{ user.name }}</h1>
+    {% if reviews %}
+        <ul>
+            {% for review in reviews %}
+                <li>{{ review.review_text }} (Rating: {{ review.rating }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No reviews found for this user.</p>
+    {% endif %}
 </body>
 </html>
