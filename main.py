@@ -371,6 +371,12 @@ def ai_feature_ideas():
             return render_template('ai_feature_ideas.html', error="An error occurred while fetching AI ideas.")
 
     return render_template('ai_feature_ideas.html')
+#Check Flask Error Handling
+@app.errorhandler(Exception)
+def handle_exception(e):
+    logging.error(f"An error occurred: {str(e)}")
+    return {"error": "An internal error occurred."}, 500
+
 
 
 if __name__ == '__main__':
