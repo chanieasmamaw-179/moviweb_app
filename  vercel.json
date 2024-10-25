@@ -2,12 +2,12 @@
   "version": 2.0,
   "builds": [
     {
-      "src": "api/movieweb_app.py",
+      "src": "api/main.py",
       "use": "@vercel/python",
       "config": { "maxLambdaSize": "15mb" }
     }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "api/movieweb_app.py" }
+    { "src": "/(.*)", "dest": "api/main.py" }
   ]
 }
