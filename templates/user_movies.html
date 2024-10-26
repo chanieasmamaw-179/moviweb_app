@@ -5,26 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ user.name }}'s Movies</title>
     <!-- Main CSS from Multiverse theme -->
-	<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <!-- Custom Responsive Styles -->
     <style>
-        /* Basic styling for the section */
         #main {
             padding: 20px;
         }
 
-        /* Header styles */
         #header h1 {
             text-align: center;
             font-size: 2rem; /* Larger header for desktop */
             margin-bottom: 20px;
         }
 
-        /* Movie list styling */
         .alt {
             list-style: none;
             padding: 0;
@@ -48,7 +45,6 @@
             text-align: center; /* Center footer content */
         }
 
-        /* Media queries for responsiveness */
         @media (max-width: 600px) {
             #header h1 {
                 font-size: 1.5rem; /* Smaller header for mobile */
@@ -85,20 +81,21 @@
                 </header>
 
                 <!-- Add Movie Button -->
-                <a href="{{ url_for('add_movie', user_id=user.id) }}" class="button primary">Add Movie</a>
+                <a href="{{ url_for('add_movie', user_id=user.id) }}" class="btn btn-primary">Add Movie</a>
 
                 <!-- Movie List -->
                 <ul class="alt">
                     {% for movie in movies %}
-                        <li>
+                        <li class="d-flex justify-content-between align-items-center">
                             <strong>{{ movie.name }}</strong> ({{ movie.year }}) - Rating: {{ movie.rating }}
-                            <br>
-                            <!-- Edit Button -->
-                            <a href="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}" class="button small">Edit</a>
-                            <!-- Delete Form -->
-                            <form action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}" method="POST" style="display:inline;">
-                                <button type="submit" class="button small">Delete</button>
-                            </form>
+                            <div>
+                                <!-- Edit Button -->
+                                <a href="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                <!-- Delete Form -->
+                                <form action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </div>
                         </li>
                     {% endfor %}
                 </ul>
@@ -109,17 +106,17 @@
         <footer id="footer" class="panel">
             <div class="inner split">
                 <div>
-                     <section>
+                    <section>
                         <h2>Follow Us</h2>
                         <ul class="icons">
                             <li><a href="https://de.masterschool.com/" class="icon brands fa-twitter"><span class="label">Masterschool</span></a></li>
                             <li><a href="https://www.facebook.com/profile.php?id=100085927770264" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-                            <li><a href="https://www.yahoo.com" class="icon solid fa-envelope"><span class="label">Email:chanieasmamaw@yahoo.com</span></a></li>
+                            <li><a href="mailto:chanieasmamaw@yahoo.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
                             <li><a href="https://github.com/chanieasmamaw-179" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
                         </ul>
                     </section>
                     <p class="copyright">
-                        &copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>.
+                        &copy; Masterschool, program owner software Engineering, Berlin: <a href="http://html5up.net">HTML5 UP</a>.
                     </p>
                 </div>
             </div>

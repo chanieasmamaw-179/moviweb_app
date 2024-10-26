@@ -1,25 +1,71 @@
-<!-- user_reviews.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ user.name }}'s Reviews</title>
-    	<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
+    <style>
+        body {
+            padding: 20px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .review-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .review-item {
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .review-rating {
+            font-weight: bold;
+            color: #f39c12; /* Color for ratings */
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem; /* Smaller header for mobile */
+            }
+        }
+    </style>
 </head>
 <body>
+
     <h1>Reviews by {{ user.name }}</h1>
-    {% if reviews %}
-        <ul>
-            {% for review in reviews %}
-                <li>{{ review.review_text }} (Rating: {{ review.rating }})</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No reviews found for this user.</p>
-    {% endif %}
+
+    <div class="container">
+        {% if reviews %}
+            <ul class="review-list">
+                {% for review in reviews %}
+                    <li class="review-item">
+                        {{ review.review_text }}
+                        <div class="review-rating">Rating: {{ review.rating }}</div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-center">No reviews found for this user.</p>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybW+H1gZ3G8fnZc1gB3z7J14P8u4HGEUuk4D7u1I+f/31pe5Z" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-2FG+v3kxAOuTX/yD6cDLbZs3Ls1kM1qq5ykqs40SM/lIF5txXx4TjHGo0HoYBR2P" crossorigin="anonymous"></script>
 </body>
 </html>
