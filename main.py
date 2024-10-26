@@ -142,9 +142,14 @@ def add_user():
             return render_template('add_user.html', error="User already exists.")
 
         new_user = User(name=user_name)
+    try:
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('index'))
+    except Exception as e:
+        db.session.rollback()  # Rollback on error
+        logging.error(f"Error adding movie: {e}")
+        return render_template('add_user.html', error="Failed to add user. Please try again.")
     return render_template('add_user.html')
 @app.route('/list_users/', methods=['GET'])
 def list_users():
@@ -236,25 +241,30 @@ def add_review():
     # Render the form to add a review if it's a GET request
     return render_template('add_review.html')
 
+
 @app.route('/fetch_movie', methods=['GET', 'POST'])
 def fetch_movie():
-    """Fetch movie details and allow adding to the user's collection."""
-    user_id = request.args.get('user_id')  # Get user_id from query parameters
+    user_id = request.args.get('user_id')
 
     if request.method == 'POST':
-        movie_name = request.form.get('name')  # Use .get() to avoid KeyError
+        movie_name = request.form.get('name')
 
-        if not movie_name:  # If movie_name is None or empty
+        if not movie_name:
             return render_template('add_movie.html', error="Movie name is required.", user_id=user_id)
 
-        movie_details = fetch_movie_details_from_omdb(movie_name)
+        try:
+            movie_details = fetch_movie_details_from_omdb(movie_name)
+            if movie_details:
+                return render_template('confirm_add_movie.html', movie_details=movie_details, user_id=user_id)
+            else:
+                return render_template('add_movie.html', error="Movie not found. Please try again.", user_id=user_id)
+        except Exception as e:
+            logging.error(f"Error fetching movie details: {e}")
+            return render_template('add_movie.html', error="An error occurred while fetching movie details.",
+                                   user_id=user_id)
 
-        if movie_details:
-            return render_template('confirm_add_movie.html', movie_details=movie_details, user_id=user_id)
-        else:
-            return render_template('add_movie.html', error="Movie not found. Please try again.", user_id=user_id)
+    return render_template('add_movie.html', user_id=user_id)
 
-    return render_template('add_movie.html', user_id=user_id)  # Pass user_id to the template
 
 @app.route('/add_movie', methods=['POST'])
 def add_movie():
@@ -376,6 +386,12 @@ def ai_feature_ideas():
 def handle_exception(e):
     logging.error(f"An error occurred: {str(e)}")
     return {"error": "An internal error occurred."}, 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    logging.error(f"An error occurred: {str(e)}")
+    return render_template('500.html', error=str(e)), 500
+
 
 
 
