@@ -8,7 +8,6 @@ import os
 import logging
 import openai
 
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
@@ -20,6 +19,11 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///MoviWeb.db')
 #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
+
+file_name = "requirements.txt"
+
+with open(file_name, "r") as f:
+    requirements = f.read().splitlines()
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
