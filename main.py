@@ -387,12 +387,6 @@ def handle_exception(e):
     logging.error(f"An error occurred: {str(e)}")
     return {"error": "An internal error occurred."}, 500
 
-@app.errorhandler(Exception)
-def handle_exception(e):
-    logging.error(f"An error occurred: {str(e)}")
-    return render_template('500.html', error=str(e)), 500
-
-
 
 
 if __name__ == '__main__':
