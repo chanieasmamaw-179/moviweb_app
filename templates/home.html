@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Welcome to MoviWeb</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https:/fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https:/cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
         /* General Page Styles */
         body {
@@ -68,7 +68,7 @@
     <div class="container">
         <h1>Welcome to MoviWeb</h1>
         <nav class="d-flex justify-content-center mb-4">
-            <a href="https://github.com/chanieasmamaw-179/moviweb_app" class="nav-link">Home</a>
+            <a href="https:/github.com/chanieasmamaw-179/moviweb_app" class="nav-link">Home</a>
             <a href="{{ url_for('add_user') }}" class="nav-link">Add User</a>
             <a href="{{ url_for('list_movies', user_id=1) }}" class="nav-link">List Movies</a> <!-- Replace user_id with actual user id -->
             <a href="{{ url_for('fetch_movie', user_id=1) }}" class="nav-link">Add Movie</a> <!-- Replace user_id with actual user id -->
@@ -79,39 +79,39 @@
 
         <h3>How to Use the Database</h3>
         <ul>
-            <li><strong>Home Route:</strong><br>URL: <a href="https://moviweb-app-3.onrender.com//">https://moviweb-app-3.onrender.com//</a></li>
+            <li><strong>Home Route:</strong><br>URL: <a href="https:/moviweb-app-URL-/">https:/moviweb-app-URL-/</a></li>
 
-            <li><strong>Add a New User:</strong><br>URL: <a href="https://moviweb-app-3.onrender.com//add_user">https://moviweb-app-3.onrender.com//add_user</a></li>
+            <li><strong>Add a New User:</strong><br>URL: <a href="https:/moviweb-app-URL-/add_user">https:/moviweb-app-URL-/add_user</a></li>
 
-            <li><strong>List All Users:</strong><br>URL: <a href="https://moviweb-app-3.onrender.com//list_users/">https://moviweb-app-3.onrender.com//list_users/</a></li>
+            <li><strong>List All Users:</strong><br>URL: <a href="https:/moviweb-app-URL-/list_users/">https:/moviweb-app-URL-/list_users/</a></li>
 
-            <li><strong>List Movies of a Specific User:</strong><br>URL: <a href="https://moviweb-app-3.onrender.com//list_movies/&lt;user_id&gt;">http://127.0.0.1:/list_movies/&lt;user_id&gt;</a><br>
-            Example: <a href="https://moviweb-app-3.onrender.com//list_movies/3">https://moviweb-app-3.onrender.com//list_movies/3</a> (for user with ID 3)</li>
+            <li><strong>List Movies of a Specific User:</strong><br>URL: <a href="https:/moviweb-app-URL-/list_movies/&lt;user_id&gt;">moviweb-app-URL/list_movies/&lt;user_id&gt;</a><br>
+            Example: <a href="https:/moviweb-app-URL-/list_movies/3">https:/moviweb-app-URL-/list_movies/3</a> (for user with ID 3)</li>
 
-            <li><strong>Fetch Movie Information via OMDb API:</strong><br>URL: <a href="https://moviweb-app-3.onrender.com//fetch_movie?user_id=&lt;'user_id'&gt;">http://127.0.0.1:/fetch_movie?user_id=&lt;'user_id'&gt;</a><br>
-            Example: <a href="https://moviweb-app-3.onrender.com//fetch_movie?user_id=3">https://moviweb-app-3.onrender.com//fetch_movie?user_id=3</a></li>
+            <li><strong>Fetch Movie Information via OMDb API:</strong><br>URL: <a href="https:/moviweb-app-URL-/fetch_movie?user_id=&lt;'user_id'&gt;">moviweb-app-URL/fetch_movie?user_id=&lt;'user_id'&gt;</a><br>
+            Example: <a href="https:/moviweb-app-URL-/fetch_movie?user_id=3">https:/moviweb-app-URL-/fetch_movie?user_id=3</a></li>
 
-            <li><strong>Add a Movie to a User's Collection:</strong><br>URL: <a href="https://moviweb-app-3.onrender.com//fetch_movie?user_id=&lt;'user_id'&gt;">http://127.0.0.1:/fetch_movie?user_id=&lt;'user_id'&gt;</a><br>
-            Example: <a href="https://moviweb-app-3.onrender.com//fetch_movie?user_id=3">https://moviweb-app-3.onrender.com//fetch_movie?user_id=3</a></li>
+            <li><strong>Add a Movie to a User's Collection:</strong><br>URL: <a href="https:/moviweb-app-URL-/fetch_movie?user_id=&lt;'user_id'&gt;">moviweb-app-URL/fetch_movie?user_id=&lt;'user_id'&gt;</a><br>
+            Example: <a href="https:/moviweb-app-URL-/fetch_movie?user_id=3">https:/moviweb-app-URL-/fetch_movie?user_id=3</a></li>
 
-            <li><strong>Delete a Movie from a User's Collection:</strong><br>URL: <a href="https://moviweb-app-3.onrender.com//list_movies/&lt;'user_id'&gt;">http://127.0.0.1:/list_movies/&lt;'user_id'&gt;</a><br>
-            Example: <a href="https://moviweb-app-3.onrender.com//list_movies/3">http://127.0.0.1:/list_movies/3</a></li>
+            <li><strong>Delete a Movie from a User's Collection:</strong><br>URL: <a href="https:/moviweb-app-URL-/list_movies/&lt;'user_id'&gt;">moviweb-app-URL/list_movies/&lt;'user_id'&gt;</a><br>
+            Example: <a href="https:/moviweb-app-URL-/list_movies/3">moviweb-app-URL/list_movies/3</a></li>
 
-            <li><strong>List of Directors:</strong><br>URL: <a href="https://moviweb-app-3.onrender.com//list_directors">http://127.0.0.1:/list_directors</a></li>
+            <li><strong>List of Directors:</strong><br>URL: <a href="https:/moviweb-app-URL-/list_directors">moviweb-app-URL/list_directors</a></li>
 
-            <li><strong>List of Genres:</strong><br>URL: <a href="https://moviweb-app-3.onrender.com//list_genres">http://127.0.0.1:/list_genres</a></li>
+            <li><strong>List of Genres:</strong><br>URL: <a href="https:/moviweb-app-URL-/list_genres">moviweb-app-URL/list_genres</a></li>
 
-            <li><strong>List of All Reviews:</strong><br>URL: <a href="https://moviweb-app-3.onrender.com//list_all_reviews">http://127.0.0.1:/list_all_reviews</a></li>
+            <li><strong>List of All Reviews:</strong><br>URL: <a href="https:/moviweb-app-URL-/list_all_reviews">moviweb-app-URL/list_all_reviews</a></li>
 
-            <li><strong>Reviews from a Specific Reviewer:</strong><br>URL: <a href="https://moviweb-app-3.onrender.com//list_reviews/&lt;'user_id'&gt;">http://127.0.0.1:/list_reviews/&lt;'user_id'&gt;</a><br>
-            Example: <a href="https://moviweb-app-3.onrender.com//list_reviews/8">http://127.0.0.1:/list_reviews/8</a> (for reviewer with ID 8)</li>
+            <li><strong>Reviews from a Specific Reviewer:</strong><br>URL: <a href="https:/moviweb-app-URL-/list_reviews/&lt;'user_id'&gt;">moviweb-app-URL/list_reviews/&lt;'user_id'&gt;</a><br>
+            Example: <a href="https:/moviweb-app-URL-/list_reviews/8">moviweb-app-URL/list_reviews/8</a> (for reviewer with ID 8)</li>
         </ul>
     </div>
 
     <footer>
         <p>© 2024 MoviWeb. All rights reserved.</p>
         <p>Contact Us: Email: <a href="mailto:chanieasmamaw@yahoo.com">chanieasmamaw@yahoo.com</a> | Phone: (+49) 176-253-15-666</p>
-        <p>GitHub: <a href="https://github.com/chanieasmamaw-179">chanieasmamaw-179</a></p>
+        <p>GitHub: <a href="https:/github.com/chanieasmamaw-179">chanieasmamaw-179</a></p>
         <p>Masterschool Bootcamp, Berlin</p>
     </footer>
 
